@@ -292,7 +292,7 @@
         <button id="importBtn">⬆️</button>
         <input type="file" id="importFile" accept=".json" style="display: none;">
         <button id="configBtn">⚙️</button>
-        <button id="toggleMenuBtn">Hide ☰</button>
+        <button id="toggleMenuBtn">☰</button>
     </div>
 
     <div class="tabs">
@@ -620,18 +620,22 @@
         toggleMenuBtn.addEventListener('click', toggleMenus);
         showMenuBtn.addEventListener('click', toggleMenus);
 
-        configBtn.addEventListener('click', () => {
+        configBtn.addEventListener('click', (e) => {
+            // Stop propagation to prevent the body click listener from closing the modal
+            e.stopPropagation();
             prevKeyInput.value = config.prevKey;
             nextKeyInput.value = config.nextKey;
             configModal.style.display = 'flex';
         });
         
-        closeConfigBtn.addEventListener('click', () => {
+        closeConfigBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
             configModal.style.display = 'none';
         });
 
         document.body.addEventListener('click', (e) => {
-            if (e.target.closest('#configModal')) {
+            // Check if the click is on the config modal or its trigger button
+            if (e.target.closest('#configModal') || e.target.closest('#configBtn')) {
                 return;
             }
             if (configModal.style.display === 'flex') {
@@ -662,6 +666,9 @@
         });
 
         window.addEventListener('keydown', (e) => {
+            if (configModal.style.display === 'flex') {
+                return; // Do not process keydown if config modal is open
+            }
             if (e.key === config.prevKey) {
                 previousTab();
             } else if (e.key === config.nextKey) {
