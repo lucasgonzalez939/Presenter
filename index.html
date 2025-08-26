@@ -280,7 +280,7 @@
 <body class="dark-mode">
 
     <div id="showMenuBtn" class="show-menu-button">
-        <button>☰</button>
+        <button></button>
     </div>
 
     <div class="header">
@@ -292,7 +292,7 @@
         <button id="importBtn">⬆️</button>
         <input type="file" id="importFile" accept=".json" style="display: none;">
         <button id="configBtn">⚙️</button>
-        <button id="toggleMenuBtn">☰</button>
+        <button id="toggleMenuBtn">▲☰</button>
     </div>
 
     <div class="tabs">
@@ -613,7 +613,7 @@
         const toggleMenus = () => {
             const isHidden = header.classList.toggle('hidden');
             tabsContainer.classList.toggle('hidden');
-            toggleMenuBtn.textContent = isHidden ? 'Show ☰' : 'Hide ☰';
+            toggleMenuBtn.textContent = isHidden ? '▼☰' : '▲☰';
             showMenuBtn.classList.toggle('visible', isHidden);
         };
 
