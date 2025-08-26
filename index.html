@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Presenter - Texto a pantalla completa</title>
+    <title>Presenter - mensajes a pantalla completa</title>
     <style>
         body {
             margin: 0;
@@ -292,7 +292,7 @@
         <button id="importBtn">⬆️</button>
         <input type="file" id="importFile" accept=".json" style="display: none;">
         <button id="configBtn">⚙️</button>
-        <button id="toggleMenuBtn">☰</button>
+        <button id="toggleMenuBtn">Hide ☰</button>
     </div>
 
     <div class="tabs">
@@ -485,8 +485,9 @@
         };
 
         const createNewTab = () => {
-            const nextTabId = Object.keys(texts).length > 0
-                ? Math.max(...Object.keys(texts).map(k => parseInt(k.slice(3)))) + 1
+            const tabKeys = Object.keys(texts);
+            const nextTabId = tabKeys.length > 0
+                ? Math.max(...tabKeys.map(k => parseInt(k.slice(3)))) + 1
                 : 1;
             const newTabKey = `tab${nextTabId}`;
             texts[newTabKey] = "";
@@ -631,7 +632,7 @@
 
         document.body.addEventListener('click', (e) => {
             if (e.target.closest('#configModal')) {
-                return; // Do nothing if click is inside the modal
+                return;
             }
             if (configModal.style.display === 'flex') {
                 configModal.style.display = 'none';
