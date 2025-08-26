@@ -16,6 +16,7 @@
             height: 100vh;
             overflow: hidden;
             transition: all 0.3s ease-in-out;
+            cursor: pointer; /* Change cursor to indicate interactivity */
         }
         .header {
             display: flex;
@@ -79,6 +80,7 @@
             display: flex;
             align-items: center;
             gap: 5px;
+            user-select: none;
         }
         .tab-button:hover {
             background-color: #2D2D2D;
@@ -158,12 +160,42 @@
         .red {
             color: #FF6347;
         }
+        /* Config modal styles */
+        .config-modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #1e1e1e;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            display: none;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .config-modal label, .config-modal input {
+            color: #E0E0E0;
+        }
+        .config-modal input {
+            background-color: #2D2D2D;
+            border: 1px solid #555;
+            padding: 5px;
+        }
+        /* Drag and drop styles */
+        .tab-button.dragging {
+            opacity: 0.5;
+        }
+        .tab-button.drag-over {
+            border-bottom: 2px solid #007BFF;
+        }
     </style>
 </head>
 <body>
 
     <div id="showMenuBtn" class="show-menu-button">
-        <button>⚙️</button>
+        <button>☰</button>
     </div>
 
     <div class="header">
@@ -175,6 +207,7 @@
         <button id="importBtn">⬆️</button>
         <input type="file" id="importFile" accept=".json" style="display: none;">
         <button id="toggleMenuBtn">Hide ☰</button>
+        <button id="configBtn">⚙️</button>
     </div>
 
     <div class="tabs">
@@ -183,6 +216,14 @@
 
     <div class="text-container">
         <div class="text-content" id="textContent"></div>
+    </div>
+
+    <div id="configModal" class="config-modal">
+        <label for="prevKeyInput">Tecla para Anterior:</label>
+        <input type="text" id="prevKeyInput" readonly>
+        <label for="nextKeyInput">Tecla para Siguiente:</label>
+        <input type="text" id="nextKeyInput" readonly>
+        <button id="closeConfigBtn">Cerrar</button>
     </div>
 
     <script>
@@ -199,17 +240,29 @@
         const exportBtn = document.getElementById('exportBtn');
         const importBtn = document.getElementById('importBtn');
         const importFile = document.getElementById('importFile');
+        const configBtn = document.getElementById('configBtn');
+        const configModal = document.getElementById('configModal');
+        const prevKeyInput = document.getElementById('prevKeyInput');
+        const nextKeyInput = document.getElementById('nextKeyInput');
+        const closeConfigBtn = document.getElementById('closeConfigBtn');
 
         const DEFAULT_TEXT = "¡Bienvenido! Este texto se ajusta automáticamente al tamaño de la pantalla.";
         const FONT_SIZE_INCREMENT = 0.5;
         const MIN_FONT_SIZE = 1;
         const MAX_FONT_SIZE = 10;
-
+        
         let texts = {};
         let activeTab = null;
+        let config = {
+            prevKey: 'ArrowLeft',
+            nextKey: 'ArrowRight'
+        };
+
+        let draggingTab = null;
 
         const loadFromLocalStorage = () => {
             const storedData = localStorage.getItem('textsData');
+            const storedConfig = localStorage.getItem('configData');
             if (storedData) {
                 const data = JSON.parse(storedData);
                 texts = data.texts;
@@ -218,10 +271,14 @@
                 texts = { 'tab1': DEFAULT_TEXT };
                 activeTab = 'tab1';
             }
+            if (storedConfig) {
+                config = JSON.parse(storedConfig);
+            }
         };
 
         const saveToLocalStorage = () => {
             localStorage.setItem('textsData', JSON.stringify({ texts, activeTab }));
+            localStorage.setItem('configData', JSON.stringify(config));
         };
 
         const formatText = (text) => {
@@ -244,7 +301,7 @@
                 const tabButton = document.createElement('button');
                 tabButton.className = `tab-button ${key === activeTab ? 'active' : ''}`;
                 tabButton.dataset.tab = key;
-                tabButton.textContent = `Pestaña ${key.slice(3)}`;
+                tabButton.textContent = texts[key].name || `Pestaña ${key.slice(3)}`;
                 
                 if (tabKeys.length > 1) {
                     const closeBtn = document.createElement('span');
@@ -256,6 +313,52 @@
                     });
                     tabButton.appendChild(closeBtn);
                 }
+
+                // Drag and drop attributes
+                tabButton.draggable = true;
+                tabButton.addEventListener('dragstart', (e) => {
+                    draggingTab = tabButton;
+                    setTimeout(() => tabButton.classList.add('dragging'), 0);
+                    e.dataTransfer.effectAllowed = "move";
+                    e.dataTransfer.setData('text/plain', key);
+                });
+                tabButton.addEventListener('dragend', () => {
+                    draggingTab.classList.remove('dragging');
+                    draggingTab = null;
+                });
+                tabButton.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    if (e.target.closest('.tab-button') !== draggingTab) {
+                        e.target.closest('.tab-button').classList.add('drag-over');
+                    }
+                });
+                tabButton.addEventListener('dragleave', (e) => {
+                    e.target.closest('.tab-button').classList.remove('drag-over');
+                });
+                tabButton.addEventListener('drop', (e) => {
+                    e.preventDefault();
+                    const dropTarget = e.target.closest('.tab-button');
+                    dropTarget.classList.remove('drag-over');
+                    
+                    if (draggingTab && dropTarget && draggingTab !== dropTarget) {
+                        const draggedKey = draggingTab.dataset.tab;
+                        const dropKey = dropTarget.dataset.tab;
+                        
+                        const keys = Object.keys(texts);
+                        const draggedIndex = keys.indexOf(draggedKey);
+                        const dropIndex = keys.indexOf(dropKey);
+                        
+                        // Reorder the texts object
+                        const newTexts = {};
+                        keys.splice(draggedIndex, 1);
+                        keys.splice(dropIndex, 0, draggedKey);
+                        keys.forEach(k => newTexts[k] = texts[k]);
+                        texts = newTexts;
+                        
+                        updateUI();
+                    }
+                });
+                
                 tabsContainer.insertBefore(tabButton, newTabBtn);
             });
             setupTabListeners();
@@ -263,9 +366,26 @@
 
         const setupTabListeners = () => {
             tabsContainer.querySelectorAll('.tab-button:not(#newTabBtn)').forEach(button => {
+                // Click to switch tabs
                 button.addEventListener('click', () => {
                     activeTab = button.dataset.tab;
                     updateUI();
+                });
+                // Double-click to rename
+                button.addEventListener('dblclick', (e) => {
+                    const currentName = texts[button.dataset.tab].name || `Pestaña ${button.dataset.tab.slice(3)}`;
+                    const newName = prompt("Introduce un nuevo nombre para la pestaña:", currentName);
+                    if (newName !== null && newName.trim() !== "") {
+                        if (typeof texts[button.dataset.tab] === 'string') {
+                            texts[button.dataset.tab] = {
+                                content: texts[button.dataset.tab],
+                                name: newName
+                            };
+                        } else {
+                            texts[button.dataset.tab].name = newName;
+                        }
+                        updateUI();
+                    }
                 });
             });
         };
@@ -289,6 +409,22 @@
             updateUI();
         };
 
+        const nextTab = () => {
+            const tabKeys = Object.keys(texts);
+            const currentIndex = tabKeys.indexOf(activeTab);
+            const nextIndex = (currentIndex + 1) % tabKeys.length;
+            activeTab = tabKeys[nextIndex];
+            updateUI();
+        };
+
+        const previousTab = () => {
+            const tabKeys = Object.keys(texts);
+            const currentIndex = tabKeys.indexOf(activeTab);
+            const prevIndex = (currentIndex - 1 + tabKeys.length) % tabKeys.length;
+            activeTab = tabKeys[prevIndex];
+            updateUI();
+        };
+
         const updateFontSize = (direction) => {
             const currentSize = parseFloat(getComputedStyle(textContent).fontSize);
             let newSize;
@@ -304,7 +440,7 @@
         };
 
         const exportData = () => {
-            const dataStr = JSON.stringify({ texts, activeTab }, null, 2);
+            const dataStr = JSON.stringify({ texts, activeTab, config }, null, 2);
             const blob = new Blob([dataStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -327,6 +463,7 @@
                     if (importedData.texts && importedData.activeTab) {
                         texts = importedData.texts;
                         activeTab = importedData.activeTab;
+                        config = importedData.config || config;
                         updateUI();
                         alert('Datos importados correctamente.');
                     } else {
@@ -341,19 +478,28 @@
 
         const updateUI = () => {
             renderTabs();
-            textInput.value = texts[activeTab] || "";
-            textContent.innerHTML = formatText(texts[activeTab] || "");
+            // Handle old string format vs new object format
+            textInput.value = texts[activeTab].content || texts[activeTab] || "";
+            textContent.innerHTML = formatText(texts[activeTab].content || texts[activeTab] || "");
             saveToLocalStorage();
         };
 
         textInput.addEventListener('input', (e) => {
-            texts[activeTab] = e.target.value;
+            if (typeof texts[activeTab] === 'string') {
+                texts[activeTab] = { content: e.target.value };
+            } else {
+                texts[activeTab].content = e.target.value;
+            }
             textContent.innerHTML = formatText(e.target.value);
             saveToLocalStorage();
         });
 
         clearBtn.addEventListener('click', () => {
-            texts[activeTab] = "";
+            if (typeof texts[activeTab] === 'string') {
+                texts[activeTab] = "";
+            } else {
+                texts[activeTab].content = "";
+            }
             updateUI();
         });
 
@@ -373,9 +519,55 @@
         toggleMenuBtn.addEventListener('click', toggleMenus);
         showMenuBtn.addEventListener('click', toggleMenus);
 
+        // Config button and modal
+        configBtn.addEventListener('click', () => {
+            prevKeyInput.value = config.prevKey;
+            nextKeyInput.value = config.nextKey;
+            configModal.style.display = 'flex';
+        });
+        closeConfigBtn.addEventListener('click', () => {
+            configModal.style.display = 'none';
+        });
+
+        const handleKeypressForConfig = (e) => {
+            const key = e.key;
+            if (document.activeElement === prevKeyInput) {
+                config.prevKey = key;
+                prevKeyInput.value = key;
+            } else if (document.activeElement === nextKeyInput) {
+                config.nextKey = key;
+                nextKeyInput.value = key;
+            }
+            saveToLocalStorage();
+        };
+        prevKeyInput.addEventListener('keydown', handleKeypressForConfig);
+        nextKeyInput.addEventListener('keydown', handleKeypressForConfig);
+
+        // Global listeners
+        window.addEventListener('keydown', (e) => {
+            if (e.key === config.prevKey) {
+                previousTab();
+            } else if (e.key === config.nextKey) {
+                nextTab();
+            }
+        });
+
+        document.body.addEventListener('click', (e) => {
+            // Check if the click is not on a button, input, or inside the config modal
+            if (!e.target.closest('button, input, .config-modal')) {
+                const x = e.clientX;
+                const bodyWidth = document.body.offsetWidth;
+                if (x < bodyWidth / 2) {
+                    previousTab();
+                } else {
+                    nextTab();
+                }
+            }
+        });
+
+        // Initialize
         loadFromLocalStorage();
         updateUI();
-        // The event listener for the new tab button should be here, to be set only once.
         newTabBtn.addEventListener('click', createNewTab);
     </script>
 </body>
