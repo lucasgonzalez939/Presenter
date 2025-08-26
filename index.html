@@ -16,7 +16,7 @@
             height: 100vh;
             overflow: hidden;
             transition: all 0.3s ease-in-out;
-            cursor: pointer; /* Change cursor to indicate interactivity */
+            cursor: pointer;
         }
         .header {
             display: flex;
@@ -301,7 +301,9 @@
                 const tabButton = document.createElement('button');
                 tabButton.className = `tab-button ${key === activeTab ? 'active' : ''}`;
                 tabButton.dataset.tab = key;
-                tabButton.textContent = texts[key].name || `Pestaña ${key.slice(3)}`;
+                // Check if the tab data is an object with a name property
+                const tabName = texts[key].name || `Pestaña ${key.slice(3)}`;
+                tabButton.textContent = tabName;
                 
                 if (tabKeys.length > 1) {
                     const closeBtn = document.createElement('span');
@@ -373,9 +375,13 @@
                 });
                 // Double-click to rename
                 button.addEventListener('dblclick', (e) => {
-                    const currentName = texts[button.dataset.tab].name || `Pestaña ${button.dataset.tab.slice(3)}`;
+                    // Check for the new object format
+                    const currentName = typeof texts[button.dataset.tab] === 'object' 
+                                      ? texts[button.dataset.tab].name
+                                      : `Pestaña ${button.dataset.tab.slice(3)}`;
                     const newName = prompt("Introduce un nuevo nombre para la pestaña:", currentName);
                     if (newName !== null && newName.trim() !== "") {
+                        // Ensure the data is in the object format before saving the new name
                         if (typeof texts[button.dataset.tab] === 'string') {
                             texts[button.dataset.tab] = {
                                 content: texts[button.dataset.tab],
@@ -391,13 +397,15 @@
         };
 
         const createNewTab = () => {
-            const nextTabId = Object.keys(texts).length + 1;
+            const nextTabId = Object.keys(texts).length > 0
+                ? Math.max(...Object.keys(texts).map(k => parseInt(k.slice(3)))) + 1
+                : 1;
             const newTabKey = `tab${nextTabId}`;
             texts[newTabKey] = "";
             activeTab = newTabKey;
             updateUI();
         };
-
+        
         const closeTab = (key) => {
             delete texts[key];
             if (Object.keys(texts).length === 0) {
@@ -479,17 +487,21 @@
         const updateUI = () => {
             renderTabs();
             // Handle old string format vs new object format
-            textInput.value = texts[activeTab].content || texts[activeTab] || "";
-            textContent.innerHTML = formatText(texts[activeTab].content || texts[activeTab] || "");
+            const currentText = typeof texts[activeTab] === 'object'
+                ? texts[activeTab].content
+                : texts[activeTab];
+            textInput.value = currentText || "";
+            textContent.innerHTML = formatText(currentText || "");
             saveToLocalStorage();
         };
 
         textInput.addEventListener('input', (e) => {
+            // Update to the new object format
             if (typeof texts[activeTab] === 'string') {
-                texts[activeTab] = { content: e.target.value };
-            } else {
-                texts[activeTab].content = e.target.value;
+                const originalText = texts[activeTab];
+                texts[activeTab] = { content: originalText, name: `Pestaña ${activeTab.slice(3)}` };
             }
+            texts[activeTab].content = e.target.value;
             textContent.innerHTML = formatText(e.target.value);
             saveToLocalStorage();
         });
