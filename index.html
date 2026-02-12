@@ -4,278 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Presenter - mensajes a pantalla completa</title>
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-            transition: all 0.3s ease-in-out;
-            cursor: pointer;
-        }
-
-        /* Estilos del tema oscuro */
-        body.dark-mode {
-            background-color: #121212;
-            color: #E0E0E0;
-        }
-        .dark-mode .header {
-            background-color: #1E1E1E;
-            border-bottom: 2px solid #333;
-        }
-        .dark-mode .header input {
-            background-color: #2D2D2D;
-            border: 1px solid #555;
-            color: #E0E0E0;
-        }
-        .dark-mode .header button {
-            background-color: #555;
-            color: white;
-        }
-        .dark-mode .header button:hover {
-            background-color: #777;
-        }
-        .dark-mode .tabs {
-            background-color: #1E1E1E;
-            border-bottom: 2px solid #333;
-        }
-        .dark-mode .tab-button {
-            background-color: transparent;
-            color: #999;
-        }
-        .dark-mode .tab-button:hover {
-            background-color: #2D2D2D;
-        }
-        .dark-mode .tab-button.active {
-            color: #fff;
-            background-color: #2D2D2D;
-            border-bottom-color: #007BFF;
-        }
-        .dark-mode .tab-close-btn {
-            color: #999;
-        }
-        .dark-mode .tab-close-btn:hover {
-            color: #fff;
-        }
-        .dark-mode .show-menu-button button {
-            background-color: rgba(45, 45, 45, 0.7);
-            color: white;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
-        }
-        .dark-mode .show-menu-button button:hover {
-            background-color: rgba(77, 77, 77, 0.8);
-        }
-        .dark-mode .config-modal {
-            background-color: #1e1e1e;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
-        }
-        .dark-mode .config-modal label, .dark-mode .config-modal input {
-            color: #E0E0E0;
-        }
-        .dark-mode .config-modal input {
-            background-color: #2D2D2D;
-            border: 1px solid #555;
-        }
-
-        /* Estilos del tema claro */
-        body.light-mode {
-            background-color: #F0F2F5;
-            color: #333;
-        }
-        .light-mode .header {
-            background-color: #fff;
-            border-bottom: 2px solid #ddd;
-        }
-        .light-mode .header input {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            color: #333;
-        }
-        .light-mode .header button {
-            background-color: #eee;
-            color: #555;
-        }
-        .light-mode .header button:hover {
-            background-color: #ddd;
-        }
-        .light-mode .tabs {
-            background-color: #f8f9fa;
-            border-bottom: 2px solid #ddd;
-        }
-        .light-mode .tab-button {
-            background-color: transparent;
-            color: #666;
-        }
-        .light-mode .tab-button:hover {
-            background-color: #E9ECEF;
-        }
-        .light-mode .tab-button.active {
-            color: #333;
-            background-color: #E9ECEF;
-            border-bottom-color: #007BFF;
-        }
-        .light-mode .tab-close-btn {
-            color: #666;
-        }
-        .light-mode .tab-close-btn:hover {
-            color: #333;
-        }
-        .light-mode .show-menu-button button {
-            background-color: rgba(255, 255, 255, 0.7);
-            color: #333;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-        }
-        .light-mode .show-menu-button button:hover {
-            background-color: rgba(220, 220, 220, 0.8);
-        }
-        .light-mode .config-modal {
-            background-color: #fff;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        .light-mode .config-modal label, .light-mode .config-modal input {
-            color: #333;
-        }
-        .light-mode .config-modal input {
-            background-color: #f8f9fa;
-            border: 1px solid #ccc;
-        }
-
-        /* Common styles */
-        .header {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            padding: 10px;
-            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-            flex-wrap: wrap;
-        }
-        .header.hidden {
-            transform: translateY(-100%);
-            opacity: 0;
-            position: absolute;
-            width: 100%;
-        }
-        .header input {
-            flex-grow: 1;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .header button {
-            border: none;
-            padding: 10px 15px;
-            border-radius: 5px;
-            cursor: pointer;
-            white-space: nowrap;
-        }
-        .tabs {
-            display: flex;
-            transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
-            overflow-x: auto;
-        }
-        .tabs.hidden {
-            transform: translateY(-100%);
-            opacity: 0;
-            position: absolute;
-            width: 100%;
-        }
-        .tab-button {
-            padding: 10px 20px;
-            border: none;
-            cursor: pointer;
-            border-bottom: 2px solid transparent;
-            transition: all 0.3s ease;
-            white-space: nowrap;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            user-select: none;
-        }
-        .tab-close-btn {
-            background: none;
-            border: none;
-            font-size: 1.2rem;
-            cursor: pointer;
-            padding: 0;
-            margin-left: 5px;
-        }
-        .text-container {
-            flex-grow: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-            word-wrap: break-word;
-            overflow-y: auto;
-        }
-        .text-content {
-            text-align: center;
-            line-height: 1.5;
-            padding: 20px;
-            font-size: clamp(2rem, 10vw, 5rem);
-            white-space: pre-wrap;
-        }
-        .show-menu-button {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 1000;
-            transition: opacity 0.3s ease-in-out;
-            opacity: 0;
-            pointer-events: none;
-        }
-        .show-menu-button.visible {
-            opacity: 1;
-            pointer-events: auto;
-        }
-        .show-menu-button button {
-            border: none;
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            font-size: 24px;
-            cursor: pointer;
-            backdrop-filter: blur(5px);
-            -webkit-backdrop-filter: blur(5px);
-            transition: background-color 0.3s;
-        }
-        .highlight {
-            font-weight: bold;
-            color: #FFD700;
-        }
-        .blue {
-            color: #00BFFF;
-        }
-        .red {
-            color: #FF6347;
-        }
-        .config-modal {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            padding: 20px;
-            border-radius: 10px;
-            z-index: 2000;
-            display: none;
-            flex-direction: column;
-            gap: 15px;
-        }
-        .config-modal input {
-            padding: 5px;
-            border-radius: 5px;
-        }
-        .tab-button.dragging {
-            opacity: 0.5;
-        }
-        .tab-button.drag-over {
-            border-bottom: 2px solid #007BFF;
-        }
-    </style>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body class="dark-mode">
 
@@ -288,12 +17,13 @@
         <button id="clearBtn">🧹</button>
         <button id="decreaseFontBtn">-</button>
         <button id="increaseFontBtn">+</button>
-        <button id="exportBtn">⬇️</button>
-        <button id="importBtn">⬆️</button>
-        <input type="file" id="importFile" accept=".json" style="display: none;">
+        <button id="resetFontBtn" title="Ajustar automáticamente al tamaño de pantalla">⟲</button>
+        <button id="helpBtn" title="Ayuda de formato">❓</button>
         <button id="configBtn">⚙️</button>
         <button id="toggleMenuBtn">▲☰</button>
     </div>
+    
+    <input type="file" id="importFile" accept=".json" style="display: none;">
 
     <div class="tabs">
         <button id="newTabBtn" class="tab-button" data-tab="new-tab">+</button>
@@ -304,396 +34,83 @@
     </div>
 
     <div id="configModal" class="config-modal">
-        <label for="prevKeyInput">Tecla para Anterior:</label>
-        <input type="text" id="prevKeyInput" readonly>
-        <label for="nextKeyInput">Tecla para Siguiente:</label>
-        <input type="text" id="nextKeyInput" readonly>
-        <button id="darkModeToggle">Cambiar a Modo Claro</button>
+        <h3>⚙️ Configuración</h3>
+        
+        <div class="config-section">
+            <h4>🎨 Apariencia</h4>
+            <button id="darkModeToggle">Cambiar a Modo Claro</button>
+        </div>
+        
+        <div class="config-section">
+            <h4>⌨️ Atajos de Teclado</h4>
+            <label for="prevKeyInput">Tecla para Anterior:</label>
+            <input type="text" id="prevKeyInput" readonly>
+            <label for="nextKeyInput">Tecla para Siguiente:</label>
+            <input type="text" id="nextKeyInput" readonly>
+        </div>
+        
+        <div class="config-section">
+            <h4>💾 Importar / Exportar</h4>
+            <button id="exportBtn">⬇️ Exportar Presentación</button>
+            <button id="importBtn">⬆️ Importar Presentación</button>
+            <button id="downloadTemplateBtn">📄 Descargar Plantilla para LLM</button>
+        </div>
+        
         <button id="closeConfigBtn">Cerrar</button>
     </div>
 
-    <script>
-        const textInput = document.getElementById('textInput');
-        const textContent = document.getElementById('textContent');
-        const tabsContainer = document.querySelector('.tabs');
-        const newTabBtn = document.getElementById('newTabBtn');
-        const clearBtn = document.getElementById('clearBtn');
-        const toggleMenuBtn = document.getElementById('toggleMenuBtn');
-        const header = document.querySelector('.header');
-        const showMenuBtn = document.getElementById('showMenuBtn');
-        const decreaseFontBtn = document.getElementById('decreaseFontBtn');
-        const increaseFontBtn = document.getElementById('increaseFontBtn');
-        const exportBtn = document.getElementById('exportBtn');
-        const importBtn = document.getElementById('importBtn');
-        const importFile = document.getElementById('importFile');
-        const configBtn = document.getElementById('configBtn');
-        const configModal = document.getElementById('configModal');
-        const prevKeyInput = document.getElementById('prevKeyInput');
-        const nextKeyInput = document.getElementById('nextKeyInput');
-        const closeConfigBtn = document.getElementById('closeConfigBtn');
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        const body = document.body;
-
-        const DEFAULT_TEXT = "¡Bienvenido! Este texto se ajusta automáticamente al tamaño de la pantalla.";
-        const FONT_SIZE_INCREMENT = 0.5;
-        const MIN_FONT_SIZE = 1;
-        const MAX_FONT_SIZE = 10;
+    <div id="helpModal" class="help-modal">
+        <h3>📝 Guía de Formato de Texto</h3>
         
-        let texts = {};
-        let activeTab = null;
-        let config = {
-            prevKey: 'ArrowLeft',
-            nextKey: 'ArrowRight',
-            isDarkMode: true
-        };
-
-        let draggingTab = null;
-
-        const loadFromLocalStorage = () => {
-            const storedData = localStorage.getItem('textsData');
-            const storedConfig = localStorage.getItem('configData');
-            if (storedData) {
-                const data = JSON.parse(storedData);
-                texts = data.texts;
-                activeTab = data.activeTab;
-            } else {
-                texts = { 'tab1': DEFAULT_TEXT };
-                activeTab = 'tab1';
-            }
-            if (storedConfig) {
-                config = JSON.parse(storedConfig);
-            }
-        };
-
-        const saveToLocalStorage = () => {
-            localStorage.setItem('textsData', JSON.stringify({ texts, activeTab }));
-            localStorage.setItem('configData', JSON.stringify(config));
-        };
-
-        const formatText = (text) => {
-            let formattedText = text.replace(/</g, '&lt;').replace(/>/g, '&gt;');
-            formattedText = formattedText.replace(/\n/g, '<br>');
-            formattedText = formattedText.replace(/\*(.*?)\*/g, '<span class="highlight">$1</span>');
-            formattedText = formattedText.replace(/#red#(.*?)#/g, '<span class="red">$1</span>');
-            formattedText = formattedText.replace(/#blue#(.*?)#/g, '<span class="blue">$1</span>');
+        <div class="format-example">
+            <div><strong>Formato:</strong></div>
+            <div><strong>Ejemplo:</strong></div>
             
-            if (formattedText.trim() === '' || formattedText === '<br>') {
-                return DEFAULT_TEXT;
-            }
-            return formattedText;
-        };
-
-        const renderTabs = () => {
-            tabsContainer.querySelectorAll('.tab-button:not(#newTabBtn)').forEach(btn => btn.remove());
-            const tabKeys = Object.keys(texts);
-            tabKeys.forEach(key => {
-                const tabButton = document.createElement('button');
-                tabButton.className = `tab-button ${key === activeTab ? 'active' : ''}`;
-                tabButton.dataset.tab = key;
-                const tabName = typeof texts[key] === 'object' && texts[key].name
-                    ? texts[key].name
-                    : `Pestaña ${key.slice(3)}`;
-                tabButton.textContent = tabName;
-                
-                if (tabKeys.length > 1) {
-                    const closeBtn = document.createElement('span');
-                    closeBtn.className = 'tab-close-btn';
-                    closeBtn.innerHTML = '&times;';
-                    closeBtn.addEventListener('click', (e) => {
-                        e.stopPropagation();
-                        closeTab(key);
-                    });
-                    tabButton.appendChild(closeBtn);
-                }
-
-                tabButton.draggable = true;
-                tabButton.addEventListener('dragstart', (e) => {
-                    draggingTab = tabButton;
-                    setTimeout(() => tabButton.classList.add('dragging'), 0);
-                    e.dataTransfer.effectAllowed = "move";
-                    e.dataTransfer.setData('text/plain', key);
-                });
-                tabButton.addEventListener('dragend', () => {
-                    if (draggingTab) {
-                        draggingTab.classList.remove('dragging');
-                    }
-                    draggingTab = null;
-                });
-                tabButton.addEventListener('dragover', (e) => {
-                    e.preventDefault();
-                    if (e.target.closest('.tab-button') && e.target.closest('.tab-button') !== draggingTab) {
-                        e.target.closest('.tab-button').classList.add('drag-over');
-                    }
-                });
-                tabButton.addEventListener('dragleave', (e) => {
-                    if (e.target.closest('.tab-button')) {
-                        e.target.closest('.tab-button').classList.remove('drag-over');
-                    }
-                });
-                tabButton.addEventListener('drop', (e) => {
-                    e.preventDefault();
-                    const dropTarget = e.target.closest('.tab-button');
-                    if (dropTarget) {
-                        dropTarget.classList.remove('drag-over');
-                    }
-                    
-                    if (draggingTab && dropTarget && draggingTab !== dropTarget) {
-                        const draggedKey = draggingTab.dataset.tab;
-                        const dropKey = dropTarget.dataset.tab;
-                        
-                        const keys = Object.keys(texts);
-                        const draggedIndex = keys.indexOf(draggedKey);
-                        const dropIndex = keys.indexOf(dropKey);
-                        
-                        const newTexts = {};
-                        keys.splice(draggedIndex, 1);
-                        keys.splice(dropIndex, 0, draggedKey);
-                        keys.forEach(k => newTexts[k] = texts[k]);
-                        texts = newTexts;
-                        
-                        updateUI();
-                    }
-                });
-                
-                tabsContainer.insertBefore(tabButton, newTabBtn);
-            });
-            setupTabListeners();
-        };
-
-        const setupTabListeners = () => {
-            tabsContainer.querySelectorAll('.tab-button:not(#newTabBtn)').forEach(button => {
-                button.addEventListener('click', () => {
-                    activeTab = button.dataset.tab;
-                    updateUI();
-                });
-                button.addEventListener('dblclick', (e) => {
-                    const tabKey = button.dataset.tab;
-                    const currentName = typeof texts[tabKey] === 'object' && texts[tabKey].name
-                                      ? texts[tabKey].name
-                                      : `Pestaña ${tabKey.slice(3)}`;
-                    const newName = prompt("Introduce un nuevo nombre para la pestaña:", currentName);
-                    if (newName !== null && newName.trim() !== "") {
-                        if (typeof texts[tabKey] === 'string') {
-                            texts[tabKey] = { content: texts[tabKey], name: newName };
-                        } else {
-                            texts[tabKey].name = newName;
-                        }
-                        updateUI();
-                    }
-                });
-            });
-        };
-
-        const createNewTab = () => {
-            const tabKeys = Object.keys(texts);
-            const nextTabId = tabKeys.length > 0
-                ? Math.max(...tabKeys.map(k => parseInt(k.slice(3)))) + 1
-                : 1;
-            const newTabKey = `tab${nextTabId}`;
-            texts[newTabKey] = "";
-            activeTab = newTabKey;
-            updateUI();
-        };
+            <div><code>*texto*</code></div>
+            <div><strong>Texto en negrita</strong></div>
+            
+            <div><code>##texto##</code></div>
+            <div>Texto con <span class="bg-highlight">fondo destacado</span></div>
+            
+            <div><code>#red#texto#</code></div>
+            <div><span class="red">Texto rojo</span></div>
+            
+            <div><code>#blue#texto#</code></div>
+            <div><span class="blue">Texto azul</span></div>
+            
+            <div><code>#green#texto#</code></div>
+            <div><span class="green">Texto verde</span></div>
+            
+            <div><code>#yellow#texto#</code></div>
+            <div><span class="yellow">Texto amarillo</span></div>
+            
+            <div><code>#orange#texto#</code></div>
+            <div><span class="orange">Texto naranja</span></div>
+            
+            <div><code>#purple#texto#</code></div>
+            <div><span class="purple">Texto morado</span></div>
+            
+            <div><code>#white#texto#</code></div>
+            <div><span class="white">Texto blanco</span></div>
+            
+            <div><code>#center#texto#end#</code></div>
+            <div>Texto centrado</div>
+            
+            <div><code>|||</code></div>
+            <div>Saltos de línea múltiples</div>
+        </div>
         
-        const closeTab = (key) => {
-            delete texts[key];
-            if (Object.keys(texts).length === 0) {
-                createNewTab();
-            } else {
-                const tabKeys = Object.keys(texts);
-                activeTab = tabKeys[tabKeys.length - 1];
-            }
-            updateUI();
-        };
-
-        const nextTab = () => {
-            const tabKeys = Object.keys(texts);
-            if (tabKeys.length <= 1) return;
-            const currentIndex = tabKeys.indexOf(activeTab);
-            const nextIndex = (currentIndex + 1) % tabKeys.length;
-            activeTab = tabKeys[nextIndex];
-            updateUI();
-        };
-
-        const previousTab = () => {
-            const tabKeys = Object.keys(texts);
-            if (tabKeys.length <= 1) return;
-            const currentIndex = tabKeys.indexOf(activeTab);
-            const prevIndex = (currentIndex - 1 + tabKeys.length) % tabKeys.length;
-            activeTab = tabKeys[prevIndex];
-            updateUI();
-        };
-
-        const updateFontSize = (direction) => {
-            const currentSize = parseFloat(getComputedStyle(textContent).fontSize);
-            let newSize;
-            if (direction === 'increase') {
-                newSize = currentSize + FONT_SIZE_INCREMENT * 16;
-            } else {
-                newSize = currentSize - FONT_SIZE_INCREMENT * 16;
-            }
-            const newSizeRem = newSize / 16;
-            if (newSizeRem >= MIN_FONT_SIZE && newSizeRem <= MAX_FONT_SIZE) {
-                textContent.style.fontSize = `${newSizeRem}rem`;
-            }
-        };
-
-        const exportData = () => {
-            const dataStr = JSON.stringify({ texts, activeTab, config }, null, 2);
-            const blob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'sesion_texto.json';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        };
-
-        const importData = (event) => {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    if (importedData.texts && importedData.activeTab) {
-                        texts = importedData.texts;
-                        activeTab = importedData.activeTab;
-                        config = importedData.config || config;
-                        updateUI();
-                        alert('Datos importados correctamente.');
-                    } else {
-                        alert('Formato de archivo JSON inválido. Asegúrese de que contenga "texts" y "activeTab".');
-                    }
-                } catch (error) {
-                    alert('Error al leer el archivo JSON.');
-                }
-            };
-            reader.readAsText(file);
-        };
-
-        const updateUI = () => {
-            renderTabs();
-            const currentText = typeof texts[activeTab] === 'object'
-                ? texts[activeTab].content
-                : texts[activeTab];
-            textInput.value = currentText || "";
-            textContent.innerHTML = formatText(currentText || "");
-            saveToLocalStorage();
-        };
-
-        textInput.addEventListener('input', (e) => {
-            if (typeof texts[activeTab] === 'string') {
-                const originalText = texts[activeTab];
-                texts[activeTab] = { content: originalText, name: `Pestaña ${activeTab.slice(3)}` };
-            }
-            texts[activeTab].content = e.target.value;
-            textContent.innerHTML = formatText(e.target.value);
-            saveToLocalStorage();
-        });
-
-        clearBtn.addEventListener('click', () => {
-            if (typeof texts[activeTab] === 'string') {
-                texts[activeTab] = "";
-            } else {
-                texts[activeTab].content = "";
-            }
-            updateUI();
-        });
-
-        decreaseFontBtn.addEventListener('click', () => updateFontSize('decrease'));
-        increaseFontBtn.addEventListener('click', () => updateFontSize('increase'));
-        exportBtn.addEventListener('click', exportData);
-        importBtn.addEventListener('click', () => importFile.click());
-        importFile.addEventListener('change', importData);
-
-        const toggleMenus = () => {
-            const isHidden = header.classList.toggle('hidden');
-            tabsContainer.classList.toggle('hidden');
-            toggleMenuBtn.textContent = isHidden ? '▼☰' : '▲☰';
-            showMenuBtn.classList.toggle('visible', isHidden);
-        };
-
-        toggleMenuBtn.addEventListener('click', toggleMenus);
-        showMenuBtn.addEventListener('click', toggleMenus);
-
-        configBtn.addEventListener('click', (e) => {
-            // Stop propagation to prevent the body click listener from closing the modal
-            e.stopPropagation();
-            prevKeyInput.value = config.prevKey;
-            nextKeyInput.value = config.nextKey;
-            configModal.style.display = 'flex';
-        });
+        <p><strong>💡 Consejos:</strong></p>
+        <ul>
+            <li>Puedes combinar formatos: <code>*#red#negrita roja#*</code></li>
+            <li>El negrita <code>*texto*</code> mantiene el color actual</li>
+            <li>Usa Enter para saltos de línea simples</li>
+            <li>Usa <code>|||</code> para espacios más grandes</li>
+        </ul>
         
-        closeConfigBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            configModal.style.display = 'none';
-        });
+        <button id="closeHelpBtn">Cerrar</button>
+    </div>
 
-        document.body.addEventListener('click', (e) => {
-            // Check if the click is on the config modal or its trigger button
-            if (e.target.closest('#configModal') || e.target.closest('#configBtn')) {
-                return;
-            }
-            if (configModal.style.display === 'flex') {
-                configModal.style.display = 'none';
-            }
-        });
-
-        const handleKeypressForConfig = (e) => {
-            const key = e.key;
-            if (document.activeElement === prevKeyInput) {
-                config.prevKey = key;
-                prevKeyInput.value = key;
-            } else if (document.activeElement === nextKeyInput) {
-                config.nextKey = key;
-                nextKeyInput.value = key;
-            }
-            saveToLocalStorage();
-        };
-        prevKeyInput.addEventListener('keydown', handleKeypressForConfig);
-        nextKeyInput.addEventListener('keydown', handleKeypressForConfig);
-
-        darkModeToggle.addEventListener('click', () => {
-            config.isDarkMode = !config.isDarkMode;
-            body.classList.toggle('dark-mode', config.isDarkMode);
-            body.classList.toggle('light-mode', !config.isDarkMode);
-            darkModeToggle.textContent = config.isDarkMode ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro';
-            saveToLocalStorage();
-        });
-
-        window.addEventListener('keydown', (e) => {
-            if (configModal.style.display === 'flex') {
-                return; // Do not process keydown if config modal is open
-            }
-            if (e.key === config.prevKey) {
-                previousTab();
-            } else if (e.key === config.nextKey) {
-                nextTab();
-            }
-        });
-
-        document.body.addEventListener('click', (e) => {
-            if (!e.target.closest('button, input, .config-modal')) {
-                const x = e.clientX;
-                const bodyWidth = document.body.offsetWidth;
-                if (x < bodyWidth / 2) {
-                    previousTab();
-                } else {
-                    nextTab();
-                }
-            }
-        });
-
-        loadFromLocalStorage();
-        body.classList.toggle('dark-mode', config.isDarkMode);
-        body.classList.toggle('light-mode', !config.isDarkMode);
-        darkModeToggle.textContent = config.isDarkMode ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro';
-        updateUI();
-        newTabBtn.addEventListener('click', createNewTab);
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>

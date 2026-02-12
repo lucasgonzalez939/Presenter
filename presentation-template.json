@@ -1,0 +1,62 @@
+{
+  "_instructions": {
+    "purpose": "This is a template for the Presenter web application. Share this file with an LLM to automatically generate formatted presentations.",
+    "how_to_use": [
+      "1. Share this JSON file with an LLM (ChatGPT, Claude, etc.)",
+      "2. Tell the LLM: 'Using this template, create a presentation about [TOPIC] with [N] slides'",
+      "3. The LLM will generate a new JSON with your content",
+      "4. Download the generated JSON file",
+      "5. Import it into Presenter using the 'Import JSON' button"
+    ],
+    "formatting_syntax": {
+      "*text*": "Makes text bold (preserves color)",
+      "#color#text#color#": "Colors text - Available: red, blue, green, yellow, orange, purple, white",
+      "##text##": "Adds yellow background highlight",
+      "#center#text#end#": "Centers a block of text",
+      "|||": "Adds multiple line breaks (spacing)",
+      "combining": "You can combine formats: *#red#bold and red#red#*"
+    },
+    "structure": {
+      "texts": "Object with tab1, tab2, tab3, etc. Each has 'name' (tab label) and 'content' (formatted text)",
+      "activeTab": "Which tab to show first (usually 'tab1')",
+      "config": {
+        "prevKey": "Keyboard key for previous slide (default: 'ArrowLeft')",
+        "nextKey": "Keyboard key for next slide (default: 'ArrowRight')",
+        "isDarkMode": "true for dark theme, false for light theme"
+      }
+    },
+    "example_prompt": "Create a presentation about 'Machine Learning Basics' with 5 slides using this template. Include: 1) Title slide with centered welcome, 2) What is ML with key points, 3) Types of ML with colored categories, 4) Applications with examples, 5) Thank you slide. Use formatting syntax for emphasis and visual appeal.",
+    "tips": [
+      "Use #center# for titles and important statements",
+      "Use ||| to add breathing room between sections",
+      "Use colors to categorize or emphasize points",
+      "Use *bold* for key terms and headings",
+      "Keep text concise - this is for presentations, not documents",
+      "Tab names should be short (1-3 words)"
+    ]
+  },
+  "texts": {
+    "tab1": {
+      "name": "Welcome",
+      "content": "#center#*Welcome to Presenter*#end#\n|||\n#blue#A modern presentation tool#blue#\n|||\nPress → or click right to continue"
+    },
+    "tab2": {
+      "name": "Text Formatting",
+      "content": "#center#*Text Formatting Options*#end#\n|||\n*Bold text* with asterisks\n|||\n#red#Red#red# #blue#Blue#blue# #green#Green#green# #yellow#Yellow#yellow#\n#orange#Orange#orange# #purple#Purple#purple# #white#White#white#\n|||\n##Background highlight##"
+    },
+    "tab3": {
+      "name": "Advanced Features",
+      "content": "#center#*Advanced Features*#end#\n|||\n✓ Auto-scaling text\n✓ Multiple tabs\n✓ Drag & drop reorder\n✓ Dark/Light theme\n✓ Export/Import sessions"
+    },
+    "tab4": {
+      "name": "Example Slide",
+      "content": "*#blue#Main Title#blue#*\n|||\nKey Point 1: #green#Important information#green#\nKey Point 2: ##Highlighted text##\nKey Point 3: *Emphasized message*\n|||\n#center#Thank you!#end#"
+    }
+  },
+  "activeTab": "tab1",
+  "config": {
+    "prevKey": "ArrowLeft",
+    "nextKey": "ArrowRight",
+    "isDarkMode": true
+  }
+}

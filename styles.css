@@ -1,0 +1,529 @@
+/* Presenter - Styles */
+
+/* Base styles */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    overflow: hidden;
+    transition: all 0.3s ease-in-out;
+    cursor: pointer;
+}
+
+/* Dark mode theme */
+body.dark-mode {
+    background-color: #121212;
+    color: #E0E0E0;
+}
+
+.dark-mode .header {
+    background-color: #1E1E1E;
+    border-bottom: 2px solid #333;
+}
+
+.dark-mode .header input {
+    background-color: #2D2D2D;
+    border: 1px solid #555;
+    color: #E0E0E0;
+}
+
+.dark-mode .header button {
+    background-color: #555;
+    color: white;
+}
+
+.dark-mode .header button:hover {
+    background-color: #777;
+}
+
+.dark-mode .tabs {
+    background-color: #1E1E1E;
+    border-bottom: 2px solid #333;
+}
+
+.dark-mode .tab-button {
+    background-color: transparent;
+    color: #999;
+}
+
+.dark-mode .tab-button:hover {
+    background-color: #2D2D2D;
+}
+
+.dark-mode .tab-button.active {
+    color: #fff;
+    background-color: #2D2D2D;
+    border-bottom-color: #007BFF;
+}
+
+.dark-mode .tab-close-btn {
+    color: #999;
+}
+
+.dark-mode .tab-close-btn:hover {
+    color: #fff;
+}
+
+.dark-mode .show-menu-button button {
+    background-color: rgba(45, 45, 45, 0.7);
+    color: white;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.dark-mode .show-menu-button button:hover {
+    background-color: rgba(77, 77, 77, 0.8);
+}
+
+.dark-mode .config-modal {
+    background-color: #1e1e1e;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+}
+
+.dark-mode .config-modal label,
+.dark-mode .config-modal input,
+.dark-mode .config-modal h3,
+.dark-mode .config-modal h4 {
+    color: #E0E0E0;
+}
+
+.dark-mode .config-modal input {
+    background-color: #2D2D2D;
+    border: 1px solid #555;
+}
+
+.dark-mode .config-section {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.dark-mode .config-modal button {
+    background-color: #3d3d3d;
+    color: #E0E0E0;
+}
+
+.dark-mode .config-modal button:hover {
+    background-color: #4d4d4d;
+}
+
+.dark-mode .help-modal {
+    background-color: #1e1e1e;
+    color: #E0E0E0;
+}
+
+/* Light mode theme */
+body.light-mode {
+    background-color: #F0F2F5;
+    color: #333;
+}
+
+.light-mode .header {
+    background-color: #fff;
+    border-bottom: 2px solid #ddd;
+}
+
+.light-mode .header input {
+    background-color: #fff;
+    border: 1px solid #ccc;
+    color: #333;
+}
+
+.light-mode .header button {
+    background-color: #eee;
+    color: #555;
+}
+
+.light-mode .header button:hover {
+    background-color: #ddd;
+}
+
+.light-mode .tabs {
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #ddd;
+}
+
+.light-mode .tab-button {
+    background-color: transparent;
+    color: #666;
+}
+
+.light-mode .tab-button:hover {
+    background-color: #E9ECEF;
+}
+
+.light-mode .tab-button.active {
+    color: #333;
+    background-color: #E9ECEF;
+    border-bottom-color: #007BFF;
+}
+
+.light-mode .tab-close-btn {
+    color: #666;
+}
+
+.light-mode .tab-close-btn:hover {
+    color: #333;
+}
+
+.light-mode .show-menu-button button {
+    background-color: rgba(255, 255, 255, 0.7);
+    color: #333;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .show-menu-button button:hover {
+    background-color: rgba(220, 220, 220, 0.8);
+}
+
+.light-mode .config-modal {
+    background-color: #fff;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .config-modal label,
+.light-mode .config-modal input,
+.light-mode .config-modal h3,
+.light-mode .config-modal h4 {
+    color: #333;
+}
+
+.light-mode .config-modal input {
+    background-color: #f8f9fa;
+    border: 1px solid #ccc;
+}
+
+.light-mode .config-section {
+    background: rgba(0, 0, 0, 0.03);
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.light-mode .config-modal button {
+    background-color: #e9ecef;
+    color: #333;
+}
+
+.light-mode .config-modal button:hover {
+    background-color: #dee2e6;
+}
+
+.light-mode .help-modal {
+    background-color: #fff;
+    color: #333;
+}
+
+/* Header */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    padding: 10px;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    flex-wrap: wrap;
+}
+
+.header.hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+}
+
+.header input {
+    flex-grow: 1;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.header button {
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    overflow-x: auto;
+}
+
+.tabs.hidden {
+    transform: translateY(-100%);
+    opacity: 0;
+    position: absolute;
+    width: 100%;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    user-select: none;
+}
+
+.tab-button:active {
+    cursor: grabbing;
+}
+
+.tab-close-btn {
+    background: none;
+    border: none;
+    font-size: 1.2rem;
+    cursor: pointer;
+    padding: 0;
+    margin-left: 5px;
+}
+
+.tab-button.dragging {
+    opacity: 0.4;
+    cursor: grabbing;
+    transform: scale(0.95);
+}
+
+.tab-button.drag-over {
+    border-bottom: 3px solid #007BFF;
+    background-color: rgba(0, 123, 255, 0.1);
+    transform: scale(1.05);
+}
+
+/* Prevent text selection during drag */
+body.dragging-tab {
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+/* Text container and content */
+.text-container {
+    flex-grow: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow: hidden;
+    position: relative;
+}
+
+.text-content {
+    text-align: center;
+    line-height: 1.5;
+    padding: 20px;
+    font-size: 5rem;
+    white-space: pre-wrap;
+    max-width: 100%;
+    max-height: 100%;
+    width: 100%;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Show menu button */
+.show-menu-button {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.show-menu-button.visible {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.show-menu-button button {
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+    cursor: pointer;
+    backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
+    transition: background-color 0.3s;
+}
+
+/* Text formatting styles */
+.bold {
+    font-weight: bold;
+}
+
+.blue {
+    color: #00BFFF;
+}
+
+.red {
+    color: #FF6347;
+}
+
+.green {
+    color: #32CD32;
+}
+
+.yellow {
+    color: #FFD700;
+}
+
+.orange {
+    color: #FF8C00;
+}
+
+.purple {
+    color: #9370DB;
+}
+
+.white {
+    color: #FFFFFF;
+}
+
+.center-text {
+    display: block;
+    text-align: center;
+}
+
+.bg-highlight {
+    background-color: #FFD700;
+    color: #000;
+    padding: 2px 6px;
+    border-radius: 3px;
+}
+
+/* Config modal */
+.config-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 30px;
+    border-radius: 10px;
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+    gap: 15px;
+    max-width: 500px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.config-modal h3 {
+    margin: 0 0 20px 0;
+    font-size: 1.5em;
+    text-align: center;
+}
+
+.config-modal h4 {
+    margin: 10px 0 10px 0;
+    font-size: 1.1em;
+}
+
+.config-section {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding: 15px;
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+.config-modal input {
+    padding: 8px;
+    border-radius: 5px;
+    font-size: 1em;
+}
+
+.config-modal button {
+    padding: 10px 15px;
+    font-size: 1em;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.config-modal button:hover {
+    transform: scale(1.05);
+}
+
+.config-modal #closeConfigBtn {
+    margin-top: 10px;
+    background: #dc3545;
+    color: white;
+}
+
+/* Help modal */
+.help-modal {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 30px;
+    border-radius: 10px;
+    z-index: 2000;
+    display: none;
+    flex-direction: column;
+    gap: 10px;
+    max-width: 600px;
+    max-height: 80vh;
+    overflow-y: auto;
+}
+
+.help-modal h3 {
+    margin: 0 0 10px 0;
+}
+
+.help-modal .format-example {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+}
+
+.help-modal .format-example code {
+    display: block;
+    padding: 5px;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 3px;
+    font-family: monospace;
+}
+
+.help-modal button {
+    padding: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    background-color: #007BFF;
+    color: white;
+}
+
+.help-modal button:hover {
+    background-color: #0056b3;
+}
