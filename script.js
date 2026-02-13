@@ -570,9 +570,17 @@ window.addEventListener('keydown', (e) => {
         }
     }
     
+    // Don't process navigation keys if any modal is open
     if (configModal.style.display === 'flex' || helpModal.style.display === 'flex') {
-        return; // Do not process keydown if any modal is open
+        return;
     }
+    
+    // Don't process navigation keys if user is typing in the text input
+    if (document.activeElement === textInput) {
+        return;
+    }
+    
+    // Handle navigation keys
     if (e.key === config.prevKey) {
         previousTab();
     } else if (e.key === config.nextKey) {

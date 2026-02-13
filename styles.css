@@ -24,7 +24,8 @@ body.dark-mode {
     border-bottom: 2px solid #333;
 }
 
-.dark-mode .header input {
+.dark-mode .header input,
+.dark-mode .header textarea {
     background-color: #2D2D2D;
     border: 1px solid #555;
     color: #E0E0E0;
@@ -124,7 +125,8 @@ body.light-mode {
     border-bottom: 2px solid #ddd;
 }
 
-.light-mode .header input {
+.light-mode .header input,
+.light-mode .header textarea {
     background-color: #fff;
     border: 1px solid #ccc;
     color: #333;
@@ -218,8 +220,8 @@ body.light-mode {
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
-    padding: 10px;
+    gap: 8px;
+    padding: 8px;
     transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
     flex-wrap: wrap;
 }
@@ -231,18 +233,36 @@ body.light-mode {
     width: 100%;
 }
 
-.header input {
+.header input,
+.header textarea {
     flex-grow: 1;
-    padding: 10px;
+    padding: 6px 10px;
     border-radius: 5px;
+    font-family: inherit;
+    font-size: 14px;
+    resize: vertical;
+    min-height: 32px;
+    max-height: 150px;
+}
+
+.header textarea {
+    line-height: 1.3;
+    overflow-y: auto;
 }
 
 .header button {
     border: none;
-    padding: 10px 15px;
+    padding: 0;
+    width: 36px;
+    height: 36px;
     border-radius: 5px;
     cursor: pointer;
     white-space: nowrap;
+    font-size: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
 }
 
 /* Tabs */
@@ -260,10 +280,11 @@ body.light-mode {
 }
 
 .tab-button {
-    padding: 10px 20px;
+    padding: 6px 14px;
     border: none;
     cursor: pointer;
     border-bottom: 2px solid transparent;
+    font-size: 14px;
     transition: all 0.3s ease;
     white-space: nowrap;
     display: flex;
