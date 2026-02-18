@@ -589,7 +589,7 @@ window.addEventListener('keydown', (e) => {
 });
 
 document.body.addEventListener('click', (e) => {
-    if (!e.target.closest('button, input, .config-modal')) {
+    if (!e.target.closest('button, input, textarea, .config-modal, .help-modal')) {
         const x = e.clientX;
         const bodyWidth = document.body.offsetWidth;
         if (x < bodyWidth / 2) {
