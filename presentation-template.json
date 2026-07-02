@@ -10,7 +10,7 @@
     ],
     "formatting_syntax": {
       "*text*": "Makes text bold (preserves color)",
-      "#color#text#color#": "Colors text - Available: red, blue, green, yellow, orange, purple, white",
+      "#color#text#": "Colors text - Available: red, blue, green, yellow, orange, purple, white",
       "##text##": "Adds yellow background highlight",
       "#center#text#end#": "Centers a block of text",
       "|||": "Adds multiple line breaks (spacing)",
@@ -42,7 +42,7 @@
     },
     "tab2": {
       "name": "Text Formatting",
-      "content": "#center#*Text Formatting Options*#end#\n|||\n*Bold text* with asterisks\n|||\n#red#Red#red# #blue#Blue#blue# #green#Green#green# #yellow#Yellow#yellow#\n#orange#Orange#orange# #purple#Purple#purple# #white#White#white#\n|||\n##Background highlight##"
+      "content": "#center#*Text Formatting Options*#end#\n|||\n*Bold text* with asterisks\n|||\n#red#Red# #blue#Blue# #green#Green#green# #yellow#Yellow#\n#orange#Orange# #purple#Purple# #white#White#\n|||\n##Background highlight##"
     },
     "tab3": {
       "name": "Advanced Features",
@@ -50,7 +50,7 @@
     },
     "tab4": {
       "name": "Example Slide",
-      "content": "*#blue#Main Title#blue#*\n|||\nKey Point 1: #green#Important information#green#\nKey Point 2: ##Highlighted text##\nKey Point 3: *Emphasized message*\n|||\n#center#Thank you!#end#"
+      "content": "*#blue#Main Title#*\n|||\nKey Point 1: #green#Important information#green#\nKey Point 2: ##Highlighted text##\nKey Point 3: *Emphasized message*\n|||\n#center#Thank you!#end#"
     }
   },
   "activeTab": "tab1",
