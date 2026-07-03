@@ -11,6 +11,29 @@ body {
     overflow: hidden;
     transition: all 0.3s ease-in-out;
     cursor: pointer;
+    position: relative;
+}
+
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    opacity: var(--background-image-opacity, 0.35);
+    background-image: var(--presenter-background-image, none);
+    background-size: var(--presenter-background-size, cover);
+    background-position: var(--presenter-background-position, center center);
+    background-repeat: var(--presenter-background-repeat, no-repeat);
+    z-index: 0;
+}
+
+body.has-background-image .text-container,
+body.has-background-image .header,
+body.has-background-image .tabs,
+body.has-background-image .config-modal,
+body.has-background-image .help-modal,
+body.has-background-image .show-menu-button {
+    /*z-index: ;*/
 }
 
 /* Dark mode theme */
@@ -470,6 +493,22 @@ body.dragging-tab {
     padding: 15px;
     border-radius: 8px;
     background: rgba(0, 0, 0, 0.1);
+}
+
+.config-inline-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.config-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.config-range-row input[type="range"] {
+    flex: 1;
 }
 
 .config-modal input {

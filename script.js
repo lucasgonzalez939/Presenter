@@ -17,6 +17,14 @@ const importBtn = document.getElementById('importBtn');
 const importFile = document.getElementById('importFile');
 const configBtn = document.getElementById('configBtn');
 const configModal = document.getElementById('configModal');
+const backgroundEnabledToggle = document.getElementById('backgroundEnabledToggle');
+const backgroundImageInput = document.getElementById('backgroundImageInput');
+const removeBackgroundBtn = document.getElementById('removeBackgroundBtn');
+const backgroundOpacityInput = document.getElementById('backgroundOpacityInput');
+const backgroundOpacityValue = document.getElementById('backgroundOpacityValue');
+const backgroundSizeSelect = document.getElementById('backgroundSizeSelect');
+const backgroundPositionSelect = document.getElementById('backgroundPositionSelect');
+const backgroundRepeatSelect = document.getElementById('backgroundRepeatSelect');
 const prevKeyInput = document.getElementById('prevKeyInput');
 const nextKeyInput = document.getElementById('nextKeyInput');
 const closeConfigBtn = document.getElementById('closeConfigBtn');
@@ -39,7 +47,15 @@ let activeTab = null;
 let config = {
     prevKey: 'ArrowLeft',
     nextKey: 'ArrowRight',
-    isDarkMode: true
+    isDarkMode: true,
+    background: {
+        enabled: false,
+        imageData: '',
+        opacity: 0.35,
+        size: 'cover',
+        position: 'center center',
+        repeat: 'no-repeat'
+    }
 };
 
 let draggingTab = null;
@@ -89,13 +105,58 @@ const loadFromLocalStorage = () => {
         activeTab = 'tab1';
     }
     if (storedConfig) {
-        config = JSON.parse(storedConfig);
+        const storedParsedConfig = JSON.parse(storedConfig);
+        config = {
+            ...config,
+            ...storedParsedConfig,
+            background: {
+                ...config.background,
+                ...(storedParsedConfig.background || {})
+            }
+        };
     }
 };
 
 const saveToLocalStorage = () => {
     localStorage.setItem('textsData', JSON.stringify({ texts, activeTab }));
     localStorage.setItem('configData', JSON.stringify(config));
+};
+
+const applyBackgroundConfig = () => {
+    const background = config.background || {};
+    const hasImage = background.enabled && background.imageData;
+
+    document.documentElement.style.setProperty('--background-image-opacity', background.opacity ?? 0.35);
+
+    if (hasImage) {
+        body.style.setProperty('--presenter-background-image', `url("${background.imageData}")`);
+        body.style.setProperty('--presenter-background-size', background.size || 'cover');
+        body.style.setProperty('--presenter-background-position', background.position || 'center center');
+        body.style.setProperty('--presenter-background-repeat', background.repeat || 'no-repeat');
+        body.classList.add('has-background-image');
+    } else {
+        body.style.removeProperty('--presenter-background-image');
+        body.style.removeProperty('--presenter-background-size');
+        body.style.removeProperty('--presenter-background-position');
+        body.style.removeProperty('--presenter-background-repeat');
+        body.classList.remove('has-background-image');
+    }
+};
+
+const clampBackgroundOpacity = (value) => {
+    const numericValue = Number.parseFloat(value);
+    if (Number.isNaN(numericValue)) return 0.35;
+    return Math.min(1, Math.max(0, numericValue));
+};
+
+const syncBackgroundControls = () => {
+    const background = config.background || {};
+    backgroundEnabledToggle.checked = Boolean(background.enabled);
+    backgroundOpacityInput.value = String(clampBackgroundOpacity(background.opacity ?? 0.35));
+    backgroundOpacityValue.textContent = `${Math.round(clampBackgroundOpacity(background.opacity ?? 0.35) * 100)}%`;
+    backgroundSizeSelect.value = background.size || 'cover';
+    backgroundPositionSelect.value = background.position || 'center center';
+    backgroundRepeatSelect.value = background.repeat || 'no-repeat';
 };
 
 // Text formatting function
@@ -106,14 +167,14 @@ const formatText = (text) => {
     // Bold text with *text* - keeps original color
     formattedText = formattedText.replace(/\*(.*?)\*/g, '<strong class="bold">$1</strong>');
     
-    // Color formatting: #color#text#
-    formattedText = formattedText.replace(/#red#(.*?)#/g, '<span class="red">$1</span>');
-    formattedText = formattedText.replace(/#blue#(.*?)#/g, '<span class="blue">$1</span>');
-    formattedText = formattedText.replace(/#green#(.*?)#/g, '<span class="green">$1</span>');
-    formattedText = formattedText.replace(/#yellow#(.*?)#/g, '<span class="yellow">$1</span>');
-    formattedText = formattedText.replace(/#orange#(.*?)#/g, '<span class="orange">$1</span>');
-    formattedText = formattedText.replace(/#purple#(.*?)#/g, '<span class="purple">$1</span>');
-    formattedText = formattedText.replace(/#white#(.*?)#/g, '<span class="white">$1</span>');
+    // Color formatting: supports both #color#text# and #color#text#color#
+    const colorTags = ['red', 'blue', 'green', 'yellow', 'orange', 'purple', 'white'];
+    colorTags.forEach((color) => {
+        const openClosePattern = new RegExp(`#${color}#(.*?)#${color}#`, 'g');
+        const singleClosePattern = new RegExp(`#${color}#(.*?)#`, 'g');
+        formattedText = formattedText.replace(openClosePattern, `<span class="${color}">$1</span>`);
+        formattedText = formattedText.replace(singleClosePattern, `<span class="${color}">$1</span>`);
+    });
     
     // Background highlight with ##text##
     formattedText = formattedText.replace(/##(.*?)##/g, '<span class="bg-highlight">$1</span>');
@@ -255,7 +316,7 @@ const createNewTab = () => {
         ? Math.max(...tabKeys.map(k => parseInt(k.slice(3)))) + 1
         : 1;
     const newTabKey = `tab${nextTabId}`;
-    texts[newTabKey] = "";
+    texts[newTabKey] = DEFAULT_TEXT;
     activeTab = newTabKey;
     updateUI();
 };
@@ -418,7 +479,14 @@ const importData = (event) => {
             if (importedData.texts && importedData.activeTab) {
                 texts = importedData.texts;
                 activeTab = importedData.activeTab;
-                config = importedData.config || config;
+                config = {
+                    ...config,
+                    ...(importedData.config || {}),
+                    background: {
+                        ...config.background,
+                        ...((importedData.config && importedData.config.background) || {})
+                    }
+                };
                 updateUI();
                 alert('Datos importados correctamente.');
             } else {
@@ -447,6 +515,8 @@ const updateUI = () => {
     }, 10);
     
     saveToLocalStorage();
+    applyBackgroundConfig();
+    syncBackgroundControls();
     
     // Auto-scale text to fit viewport after a short delay to ensure DOM is updated
     setTimeout(() => autoScaleText(), 50);
@@ -492,12 +562,16 @@ importFile.addEventListener('change', importData);
 downloadTemplateBtn.addEventListener('click', downloadTemplate);
 
 toggleMenuBtn.addEventListener('click', toggleMenus);
-showMenuBtn.addEventListener('click', toggleMenus);
+showMenuBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    toggleMenus();
+});
 
 configBtn.addEventListener('click', (e) => {
     e.stopPropagation();
     prevKeyInput.value = config.prevKey;
     nextKeyInput.value = config.nextKey;
+    syncBackgroundControls();
     configModal.style.display = 'flex';
 });
 
@@ -557,6 +631,72 @@ darkModeToggle.addEventListener('click', () => {
     saveToLocalStorage();
 });
 
+backgroundEnabledToggle.addEventListener('change', (e) => {
+    config.background = config.background || {};
+    config.background.enabled = e.target.checked;
+    applyBackgroundConfig();
+    saveToLocalStorage();
+});
+
+backgroundImageInput.addEventListener('change', () => {
+    const file = backgroundImageInput.files && backgroundImageInput.files[0];
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+        alert('El archivo seleccionado no es una imagen válida.');
+        return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (e) => {
+        config.background = config.background || {};
+        config.background.imageData = String(e.target.result || '');
+        config.background.enabled = true;
+        backgroundEnabledToggle.checked = true;
+        applyBackgroundConfig();
+        saveToLocalStorage();
+    };
+    reader.readAsDataURL(file);
+});
+
+removeBackgroundBtn.addEventListener('click', () => {
+    config.background = config.background || {};
+    config.background.imageData = '';
+    config.background.enabled = false;
+    backgroundEnabledToggle.checked = false;
+    backgroundImageInput.value = '';
+    applyBackgroundConfig();
+    saveToLocalStorage();
+});
+
+backgroundOpacityInput.addEventListener('input', (e) => {
+    config.background = config.background || {};
+    config.background.opacity = clampBackgroundOpacity(e.target.value);
+    backgroundOpacityValue.textContent = `${Math.round(config.background.opacity * 100)}%`;
+    applyBackgroundConfig();
+    saveToLocalStorage();
+});
+
+backgroundSizeSelect.addEventListener('change', (e) => {
+    config.background = config.background || {};
+    config.background.size = e.target.value;
+    applyBackgroundConfig();
+    saveToLocalStorage();
+});
+
+backgroundPositionSelect.addEventListener('change', (e) => {
+    config.background = config.background || {};
+    config.background.position = e.target.value;
+    applyBackgroundConfig();
+    saveToLocalStorage();
+});
+
+backgroundRepeatSelect.addEventListener('change', (e) => {
+    config.background = config.background || {};
+    config.background.repeat = e.target.value;
+    applyBackgroundConfig();
+    saveToLocalStorage();
+});
+
 window.addEventListener('keydown', (e) => {
     // Close modals with Escape key
     if (e.key === 'Escape') {
@@ -590,6 +730,9 @@ window.addEventListener('keydown', (e) => {
 
 document.body.addEventListener('click', (e) => {
     if (!e.target.closest('button, input, textarea, .config-modal, .help-modal')) {
+        if (e.target.closest('#showMenuBtn') || e.target.closest('#toggleMenuBtn')) {
+            return;
+        }
         const x = e.clientX;
         const bodyWidth = document.body.offsetWidth;
         if (x < bodyWidth / 2) {
@@ -612,5 +755,7 @@ loadFromLocalStorage();
 body.classList.toggle('dark-mode', config.isDarkMode);
 body.classList.toggle('light-mode', !config.isDarkMode);
 darkModeToggle.textContent = config.isDarkMode ? 'Cambiar a Modo Claro' : 'Cambiar a Modo Oscuro';
+applyBackgroundConfig();
+syncBackgroundControls();
 updateUI();
 newTabBtn.addEventListener('click', createNewTab);

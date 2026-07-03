@@ -40,6 +40,50 @@
             <h4>🎨 Apariencia</h4>
             <button id="darkModeToggle">Cambiar a Modo Claro</button>
         </div>
+
+        <div class="config-section">
+            <h4>🖼️ Fondo</h4>
+            <label for="backgroundEnabledToggle" class="config-inline-option">
+                <input type="checkbox" id="backgroundEnabledToggle">
+                Activar imagen de fondo
+            </label>
+            <label for="backgroundImageInput">Subir imagen de fondo:</label>
+            <input type="file" id="backgroundImageInput" accept="image/*">
+            <div class="config-row">
+                <button id="removeBackgroundBtn" type="button">Eliminar imagen</button>
+            </div>
+            <label for="backgroundOpacityInput">Transparencia:</label>
+            <div class="config-row config-range-row">
+                <input type="range" id="backgroundOpacityInput" min="0" max="1" step="0.05" value="0.35">
+                <span id="backgroundOpacityValue">35%</span>
+            </div>
+            <label for="backgroundSizeSelect">Tamaño:</label>
+            <select id="backgroundSizeSelect">
+                <option value="cover">Cubrir</option>
+                <option value="contain">Contener</option>
+                <option value="100% 100%">Estirar</option>
+                <option value="auto">Original</option>
+            </select>
+            <label for="backgroundPositionSelect">Posición:</label>
+            <select id="backgroundPositionSelect">
+                <option value="center center">Centro</option>
+                <option value="top center">Arriba</option>
+                <option value="center left">Izquierda</option>
+                <option value="center right">Derecha</option>
+                <option value="bottom center">Abajo</option>
+                <option value="top left">Arriba izquierda</option>
+                <option value="top right">Arriba derecha</option>
+                <option value="bottom left">Abajo izquierda</option>
+                <option value="bottom right">Abajo derecha</option>
+            </select>
+            <label for="backgroundRepeatSelect">Repetición:</label>
+            <select id="backgroundRepeatSelect">
+                <option value="no-repeat">No repetir</option>
+                <option value="repeat">Repetir</option>
+                <option value="repeat-x">Repetir en X</option>
+                <option value="repeat-y">Repetir en Y</option>
+            </select>
+        </div>
         
         <div class="config-section">
             <h4>⌨️ Atajos de Teclado</h4>

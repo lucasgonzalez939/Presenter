@@ -22,7 +22,15 @@
       "config": {
         "prevKey": "Keyboard key for previous slide (default: 'ArrowLeft')",
         "nextKey": "Keyboard key for next slide (default: 'ArrowRight')",
-        "isDarkMode": "true for dark theme, false for light theme"
+        "isDarkMode": "true for dark theme, false for light theme",
+        "background": {
+          "enabled": "true to show the background image",
+          "imageData": "Base64 data URL string for the uploaded image",
+          "opacity": "Opacity value from 0 to 1",
+          "size": "Background size mode such as cover, contain, 100% 100%, or auto",
+          "position": "CSS background-position value",
+          "repeat": "CSS background-repeat value"
+        }
       }
     },
     "example_prompt": "Create a presentation about 'Machine Learning Basics' with 5 slides using this template. Include: 1) Title slide with centered welcome, 2) What is ML with key points, 3) Types of ML with colored categories, 4) Applications with examples, 5) Thank you slide. Use formatting syntax for emphasis and visual appeal.",
@@ -57,6 +65,14 @@
   "config": {
     "prevKey": "ArrowLeft",
     "nextKey": "ArrowRight",
-    "isDarkMode": true
+    "isDarkMode": true,
+    "background": {
+      "enabled": false,
+      "imageData": "",
+      "opacity": 0.35,
+      "size": "cover",
+      "position": "center center",
+      "repeat": "no-repeat"
+    }
   }
 }
